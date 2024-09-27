@@ -30,7 +30,7 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
-    @PutMapping
+    @PutMapping("/{productId}")
 //    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> updateProduct(@PathVariable("productId") String productId,
                                            @RequestBody ProductRequest productRequest) {
@@ -44,7 +44,7 @@ public class ProductController {
         return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{productId}")
     public ResponseEntity<?> deleteProduct(@PathVariable("productId") String productId) {
         productService.deleteProduct(productId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
