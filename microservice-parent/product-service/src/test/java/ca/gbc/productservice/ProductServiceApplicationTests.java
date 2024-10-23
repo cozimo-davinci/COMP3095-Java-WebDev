@@ -57,7 +57,7 @@ class ProductServiceApplicationTests {
                 .statusCode(201)
                 .body("id", Matchers.notNullValue())
                 .body("name", Matchers.equalTo("Playstation 4"))
-                .body("description", Matchers.equalTo("Special Edition"))
+                .body("description", Matchers.equalTo("Special Edition")) 
                 .body("price",  Matchers.equalTo(800));
     }
 
