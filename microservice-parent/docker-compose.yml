@@ -1,8 +1,8 @@
 # -------------------------------------------------------------
-# 1. docker-compose -p microservices-comp3095-ecommerce -f docker-compose.yml up -d
+# 1. docker-compose -p microservices-comp3095-ecommerce -f docker-compose-single.yml up -d
 # - This command will start all the containers in detached mode (-d) without rebuilding the images (if they exist)
 #
-# 2. docker-compose -p microservice-comp3095-ecommerce -f docker-compose.yml up -d --build
+# 2. docker-compose -p microservice-comp3095-ecommerce -f docker-compose-single.yml up -d --build
 # - This command forces the rebuild of images, even if they already exist, before starting them
 #
 # -------------------------------------------------------------
@@ -31,11 +31,49 @@ services:
       networks:
         - spring
 
+#    order-service:
+#      image: order-service
+#
+#      ports:
+#        - "8089:8089"
+#
+#      build:
+#        context: ./order-service  # The directory where the Dockerfile resides
+#        dockerfile: ./Dockerfile    # Specify the Dockerfile for use to build image
+#
+#      container_name: order-service
+#
+#      environment:
+#        SPRING_PROFILES_ACTIVE: docker
+#      depends_on:
+#        - postgres-order
+#      networks:
+#        - spring
+#
+#    inventory-service:
+#      image: inventory-service
+#
+#      ports:
+#        - "8093:8093"
+#
+#      build:
+#        context: ./inventory-service  # The directory where the Dockerfile resides
+#        dockerfile: ./Dockerfile    # Specify the Dockerfile for use to build image
+#
+#      container_name: inventory-service
+#
+#      environment:
+#        SPRING_PROFILES_ACTIVE: docker
+#      depends_on:
+#        - postgres-inventory
+#      networks:
+#        - spring
+
     mongodb:
       image: mongo:latest
       container_name: mongodb
       ports:
-        - "27017:27017"
+        - "27018:27017"
       environment:
         - MONGO_INITDB_ROOT_USERNAME=admin
         - MONGO_INITDB_ROOT_PASSWORD=password
@@ -43,13 +81,53 @@ services:
       volumes:
         - ./data/mongo/products:/data/db
         - ./init/mongo/docker-entrypoint-initdb.d/mongo-init.js/:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      command: mongod --auth
       networks:
         - spring
 
+#    postgres-order:
+#      image: postgres
+#      ports:
+#        - "5433:5432"
+#      container_name: postgres-order-service
+#      environment:
+#        - POSTGRES_USER=admin
+#        - POSTGRES_PASSWORD=password
+#      volumes:
+#        - ./data/order:/var/lib/postgresql/data
+#        - ./init/order/init.sql:/docker-entrypoint-initdb.d/init.sql
+#
+#    postgres-inventory:
+#      image: postgres
+#      ports:
+#        - "5436:5432" # Changed to avoid conflict for inventory
+#      container_name: postgres-inventory-service
+#      environment:
+#        - POSTGRES_USER=admin
+#        - POSTGRES_PASSWORD=password
+#        - POSTGRES_DB=inventory-service
+#      volumes:
+#        - ./data/inventory:/var/lib/postgresql/data
+#        - ./init/inventory/init.sql:/docker-entrypoint-initdb.d/init.sql
+#      networks:
+#        - spring
+#
+#    pgadmin:
+#      image: dpage/pgadmin4
+#      ports:
+#        - "8888:80"
+#      container_name: pgadmin-complete
+#      environment:
+#        - PGADMIN_DEFAULT_EMAIL=user@domain.ca
+#        - PGADMIN_DEFAULT_PASSWORD=password
+#      networks:
+#        - spring
+##      volumes:
+#        - ./data/order:/var/lib/postgresql/data
+#        - ./init/order/init.sql:/docker-entrypoint-initdb.d/init.sql
+
 
     mongo-express:
-      image: mongo-express:latest
+      image: mongo-express
       container_name: mongo-express
       ports:
         - "8081:8081"
@@ -59,9 +137,11 @@ services:
         - ME_CONFIG_MONGODB_SERVER=mongodb
       depends_on:
         - mongodb
+      networks:
+        - spring
 networks:
   spring:
     driver: bridge
 volumes:
-   mongodb:
+   mongo-db:
       driver: local
