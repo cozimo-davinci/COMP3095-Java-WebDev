@@ -38,6 +38,8 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+    testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.6.0")
 }
 
 tasks.withType<Test> {
