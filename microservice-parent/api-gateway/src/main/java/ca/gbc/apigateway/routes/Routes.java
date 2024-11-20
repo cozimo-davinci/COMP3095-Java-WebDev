@@ -12,6 +12,8 @@ import org.springframework.web.servlet.function.RequestPredicates;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
 
+import static org.springframework.cloud.gateway.server.mvc.filter.FilterFunctions.setPath;
+
 @Configuration
 @Slf4j
 
@@ -22,6 +24,9 @@ public class Routes {
 
     @Value("${services.order-url}")
       private String orderServiceUrl;
+
+    @Value("${services.inventory-url}")
+    private String inventoryServiceUrl;
 
 
 
@@ -73,5 +78,69 @@ public class Routes {
 
                 })
                 .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> inventoryServiceRoute() {
+
+        log.info("Initializing inventory-service route with the URL {}", inventoryServiceUrl);
+
+        return GatewayRouterFunctions.route("inventory_service")
+                .route(RequestPredicates.path("/api/inventory"), request -> {
+                    log.info("Received request for inventory-service {}", request.uri());
+
+                    try {
+                        ServerResponse serverResponse = HandlerFunctions.http(inventoryServiceUrl).handle(request);
+
+                        log.info("Response status: {}", serverResponse.statusCode());
+                        return serverResponse;
+
+
+                    } catch (Exception e) {
+                        log.error("Error occurred while routing to: {}", e.getMessage(), e);
+                        return ServerResponse.status(500).body("Error occurred when routing to inventory-service");
+                    }
+
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> productServiceSwaggerRoute() {
+
+        return GatewayRouterFunctions.route("product_service_swagger")
+                .route(RequestPredicates.path("/aggregate/product-service/v3/api-docs"),
+                        HandlerFunctions.http("http://localhost:8085"))
+                .filter(setPath("/api-docs"))
+                .build();
+
+
+
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> inventoryServiceSwaggerRoute() {
+
+        return GatewayRouterFunctions.route("inventory_service_swagger")
+                .route(RequestPredicates.path("/aggregate/inventory-service/v3/api-docs"),
+                        HandlerFunctions.http("http://localhost:8093"))
+                .filter(setPath("/api-docs"))
+                .build();
+
+
+
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> orderServiceSwaggerRoute() {
+
+        return GatewayRouterFunctions.route("order_service_swagger")
+                .route(RequestPredicates.path("/aggregate/order-service/v3/api-docs"),
+                        HandlerFunctions.http("http://localhost:8089"))
+                .filter(setPath("/api-docs"))
+                .build();
+
+
+
     }
 }

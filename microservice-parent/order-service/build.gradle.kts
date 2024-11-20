@@ -39,7 +39,7 @@ dependencies {
     testImplementation("org.testcontainers:postgresql")
     testImplementation("io.rest-assured:rest-assured")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.3")
+//    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.3")
     implementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner:4.1.4")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
     testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.6.0")

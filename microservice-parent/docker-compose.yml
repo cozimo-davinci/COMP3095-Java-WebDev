@@ -164,7 +164,7 @@ services:
     postgres-inventory:
       image: postgres
       ports:
-        - "5436:5432" # Changed to avoid conflict for inventory
+        - "5431:5432" # Changed to avoid conflict for inventory
       container_name: postgres-inventory
       environment:
         - POSTGRES_USER=admin
