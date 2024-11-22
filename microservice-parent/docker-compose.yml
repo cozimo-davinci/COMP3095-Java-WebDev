@@ -16,7 +16,7 @@ services:
       image: product-service
 
       ports:
-        - "8086:8086"
+        - "8082:8082"
 
       build:
         context: ./product-service  # The directory where the Dockerfile resides
@@ -35,7 +35,7 @@ services:
       image: order-service
 
       ports:
-        - "8089:8089"
+        - "8091:8091"
 
       build:
         context: ./order-service  # The directory where the Dockerfile resides
@@ -54,7 +54,7 @@ services:
       image: inventory-service
 
       ports:
-        - "8093:8093"
+        - "8086:8086"
 
       build:
         context: ./inventory-service  # The directory where the Dockerfile resides
@@ -91,54 +91,54 @@ services:
         - spring
 
 
-#    keycloak:
-#      container_name: keycloak
-#      hostname: keycloak
-#      image: quay.io/keycloak/keycloak:24.0.1
-#      command: [ "start-dev", "--import-realm" ]
-#      environment:
-#        DB_VENDOR: postgres
-#        DB_ADDR: postgres-keycloak
-#        DB_DATABASE: keycloak
-#        DB_USER: admin
-#        DB_PASSWORD: password
-#        KEYCLOAK_ADMIN: admin
-#        KEYCLOAK_ADMIN_PASSWORD: password
-#        ROOT_LOGLEVEL: DEBUG
-#        JBOSS_LOG_MANAGER_ROOT_LOGGER: DEBUG, stdout, FILE
-#
-#
-#      ports:
-#        - "8065:8080"
-#      volumes:
-#        - ./data/realms/:/opt/keycloak/data/import
-#
-#      depends_on:
-#        - postgres-keycloak
-#
-#      networks:
-#        - spring
+    keycloak:
+      container_name: keycloak
+      hostname: keycloak
+      image: quay.io/keycloak/keycloak:24.0.1
+      command: [ "start-dev", "--import-realm" ]
+      environment:
+        DB_VENDOR: postgres
+        DB_ADDR: postgres-keycloak
+        DB_DATABASE: keycloak
+        DB_USER: admin
+        DB_PASSWORD: password
+        KEYCLOAK_ADMIN: admin
+        KEYCLOAK_ADMIN_PASSWORD: password
+        ROOT_LOGLEVEL: DEBUG
+        JBOSS_LOG_MANAGER_ROOT_LOGGER: DEBUG, stdout, FILE
 
 
-#    postgres-keycloak:
-#      image: postgres
-#      ports:
-#        - "5437:5432"  # First is external and second is internal
-#      container_name: postgres-keycloak
-#      environment:
-#        - POSTGRES_DB=keycloak
-#        - POSTGRES_USER=admin
-#        - POSTGRES_PASSWORD=password
-#      volumes:
-#        - ./data/keycloak:/var/lib/postgresql/data
-#      networks:
-#        - spring
+      ports:
+        - "8080:8080"
+      volumes:
+        - ./realms/:/opt/keycloak/data/import
+
+      depends_on:
+        - postgres-keycloak
+
+      networks:
+        - spring
+
+
+    postgres-keycloak:
+      image: postgres
+      ports:
+        - "5429:5432"  # First is external and second is internal
+      container_name: postgres-keycloak
+      environment:
+        - POSTGRES_DB=keycloak
+        - POSTGRES_USER=admin
+        - POSTGRES_PASSWORD=password
+      volumes:
+        - ./data/keycloak:/var/lib/postgresql/data
+      networks:
+        - spring
 
     mongodb:
       image: mongo:latest
       container_name: mongodb
       ports:
-        - "27018:27017"
+        - "27017:27017"
       environment:
         - MONGO_INITDB_ROOT_USERNAME=admin
         - MONGO_INITDB_ROOT_PASSWORD=password
@@ -152,26 +152,26 @@ services:
     postgres-order:
       image: postgres
       ports:
-        - "5433:5432"
+        - "5434:5432"
       container_name: postgres-order
       environment:
         - POSTGRES_USER=admin
         - POSTGRES_PASSWORD=password
       volumes:
-        - ./data/order:/var/lib/postgresql/data
+        - postgres-order-data:/var/lib/postgresql/data
         - ./init/order/init.sql:/docker-entrypoint-initdb.d/init.sql
 
     postgres-inventory:
       image: postgres
       ports:
-        - "5431:5432" # Changed to avoid conflict for inventory
+        - "5433:5432" # Changed to avoid conflict for inventory
       container_name: postgres-inventory
       environment:
         - POSTGRES_USER=admin
         - POSTGRES_PASSWORD=password
         - POSTGRES_DB=inventory-service
       volumes:
-        - ./data/inventory:/var/lib/postgresql/data
+        - postgres-inventory-data:/var/lib/postgresql/data
         - ./init/inventory/init-inventory.sql:/docker-entrypoint-initdb.d/init-inventory.sql
       networks:
         - spring
@@ -204,9 +204,15 @@ services:
         - mongodb
       networks:
         - spring
-networks:
-  spring:
-    driver: bridge
+
 volumes:
    mongo-db:
       driver: local
+   postgres-order-data:
+     driver: local
+   postgres-inventory-data:
+     driver: local
+
+networks:
+  spring:
+    driver: bridge
