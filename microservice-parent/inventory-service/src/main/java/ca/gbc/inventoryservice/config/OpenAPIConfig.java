@@ -10,27 +10,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class OpenAPIConfig {
-
+public class openAPIConfig {
     @Value("${inventory-service.version}")
     private String version;
-
     @Bean
     public OpenAPI inventoryServiceAPI() {
         return new OpenAPI()
                 .info(new Info().title("Inventory Service API")
-                        .description("This is a REST API for Inventory Service")
-                        .version(version)
-                        .license(new License().name("Apache 2.0")))
-                        .externalDocs(new ExternalDocumentation()
-                                .description("Inventory Service API Documentation")
-                                .url("https://github.com/inventory-service/blob/master/LICENSE"));
-
+                                .description("This is the REST API for Inventory Service")
+                                .version(version)
+                                .license(new License().name("Apache 2.0")))
+                .externalDocs(new ExternalDocumentation()
+                        .description("Inventory Service Wiki Documentation")
+                        .url("https://mycompany.ca/inventory-service/docs"));
     }
-
-
-
-
-
 
 }

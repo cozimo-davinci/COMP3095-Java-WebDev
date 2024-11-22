@@ -1,15 +1,15 @@
 package ca.gbc.inventoryservice.model;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
+@Table(name = "t_inventory")
 @Getter
 @Setter
-@Table(name = "t_inventory")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Inventory {
 
     @Id
@@ -17,5 +17,7 @@ public class Inventory {
     private Long id;
     private String skuCode;
     private Integer quantity;
+
+
 
 }
