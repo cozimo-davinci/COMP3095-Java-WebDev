@@ -36,6 +36,9 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.1.2")
+	implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.0")
+
 }
 
 dependencyManagement {

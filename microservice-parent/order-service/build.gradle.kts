@@ -48,6 +48,11 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("io.rest-assured:rest-assured")
     implementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
+    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.1.2")
+
+    implementation("org.springframework.kafka:spring-kafka:3.3.0")
+    testImplementation("org.springframework.kafka:spring-kafka-test:3.3.0")
+    testImplementation("org.testcontainers:kafka:1.20.4")
 
 
 

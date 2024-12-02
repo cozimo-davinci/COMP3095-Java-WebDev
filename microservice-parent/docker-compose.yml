@@ -178,7 +178,7 @@ services:
   postgres-keycloak:
     image: postgres
     ports:
-      - "5429:5432"
+      - "5432:5432"
     container_name: postgres-keycloak
     environment:
       - POSTGRES_DB=keycloak
