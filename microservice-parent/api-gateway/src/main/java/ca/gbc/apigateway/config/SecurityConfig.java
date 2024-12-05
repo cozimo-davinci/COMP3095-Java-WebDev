@@ -30,12 +30,12 @@ public class SecurityConfig {
         log.info("Initializing Security Filter Chain");
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().permitAll())      // all our request are temporary permitted
 //                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers(noauthResourceUris)
-//                        .permitAll()    // all our request are temporary permitted
-//                        .anyRequest().authenticated())
+//                        .anyRequest().permitAll())      // all our request are temporary permitted
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(noauthResourceUris)
+                        .permitAll()    // all our request are temporary permitted
+                        .anyRequest().authenticated())
                 // All request requires authentication
                 .oauth2ResourceServer(oauth2 ->oauth2
                         .jwt(Customizer.withDefaults()))
