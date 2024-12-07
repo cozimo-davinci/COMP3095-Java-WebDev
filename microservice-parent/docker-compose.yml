@@ -71,6 +71,28 @@ services:
     networks:
       - spring
 
+  notification-service:
+    image: notification-service
+    build:
+      context: ./notification-service
+      dockerfile: ./Dockerfile
+    ports:
+      - "8085:8085"
+    container_name: notification-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: broker:29092 # Use internal Docker network
+      SPRING_MAIL_HOST: sandbox.smtp.mailtrap.io
+      SPRING_MAIL_PORT: 2525
+      SPRING_MAIL_USERNAME: f0208a162e9800
+      SPRING_MAIL_PASSWORD: 0828ecc8b76f5e
+      SPRING_MAIL_PROTOCOL: smtp
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_DEBUG: "true"
+    networks:
+      - spring
+
   # MongoDB for Product Service
   mongodb:
     image: mongo:latest
