@@ -17,7 +17,6 @@ import java.net.URI;
 import static org.springframework.cloud.gateway.server.mvc.filter.FilterFunctions.setPath;
 import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions.route;
 
-
 @Configuration
 @Slf4j
 public class Routes {
@@ -30,8 +29,6 @@ public class Routes {
     @Value("${services.inventory-url}")
     private String inventoryServiceUrl;
 
-
-
     @Bean
     public RouterFunction<ServerResponse> productServiceRoute() {
         log.info("Initializing product-service route with URL: {}", productServiceUrl);
@@ -40,13 +37,14 @@ public class Routes {
                 .route(RequestPredicates.path("/api/product"), request -> {
 
                     log.info("Received request for product-service: {}", request.uri());
-                        return HandlerFunctions.http(productServiceUrl).handle(request);
+                    return HandlerFunctions.http(productServiceUrl).handle(request);
                 })
                 .filter(CircuitBreakerFilterFunctions
                         .circuitBreaker("productServiceCircuitBreaker", URI.create("forward:/fallbackRoute")))
                 .build();
 
     }
+
     @Bean
     public RouterFunction<ServerResponse> orderServiceRoute() {
         log.info("Initializing order-service route with URL: {}", orderServiceUrl);
@@ -68,6 +66,17 @@ public class Routes {
                 .build();
 
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> swaggerUiRoute() {
+        return route()
+                .route(RequestPredicates.path("/swagger-ui"), request -> {
+                    log.info("Redirecting to Swagger UI index.html");
+                    return ServerResponse.temporaryRedirect(URI.create("/swagger-ui/index.html")).build();
+                })
+                .build();
+    }
+
     @Bean
     public RouterFunction<ServerResponse> inventoryServiceRoute() {
         log.info("Initializing inventory-service route with URL: {}", inventoryServiceUrl);
@@ -89,8 +98,9 @@ public class Routes {
                 .build();
 
     }
+
     @Bean
-    public RouterFunction<ServerResponse> productServiceSwaggerRoutes(){
+    public RouterFunction<ServerResponse> productServiceSwaggerRoutes() {
         return route("product_service_swagger")
                 .route(RequestPredicates.path("/aggregate/product-service/v3/api-docs"),
                         HandlerFunctions.http(productServiceUrl))
@@ -100,7 +110,7 @@ public class Routes {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> orderServiceSwaggerRoutes(){
+    public RouterFunction<ServerResponse> orderServiceSwaggerRoutes() {
         return route("order_service_swagger")
                 .route(RequestPredicates.path("/aggregate/order-service/v3/api-docs"),
                         HandlerFunctions.http(orderServiceUrl))
@@ -110,14 +120,15 @@ public class Routes {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> inventoryServiceSwaggerRoutes(){
+    public RouterFunction<ServerResponse> inventoryServiceSwaggerRoutes() {
         return route("inventory_service_swagger")
                 .route(RequestPredicates.path("/aggregate/inventory-service/v3/api-docs"),
                         HandlerFunctions.http(inventoryServiceUrl))
                 .filter(setPath("/api-docs"))
                 .build();
 
-}
+    }
+
     @Bean
     public RouterFunction<ServerResponse> fallbackRoute() {
         return route("fallbackRoute")
@@ -126,6 +137,5 @@ public class Routes {
                                 .body("Service is Temporarily Unavailable, please try again later!"))
                 .build();
     }
-
 
 }

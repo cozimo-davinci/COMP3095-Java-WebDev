@@ -10,36 +10,35 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 @Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final String[] noauthResourceUris={
-            "/swagger-ui",
-            "/swagger-ui/*",
-            "/v3/api-docs/**",
-            "/swagger-resources/**",
-            "/api-docs/**",
-            "/aggregate/**"
-    };
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        private final String[] noauthResourceUris = {
+                        "/swagger-ui",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/aggregate/**",
+                        "/favicon.ico"
+        };
 
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-        log.info("Initializing Security Filter Chain");
-        return httpSecurity
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .anyRequest().permitAll())      // all our request are temporary permitted
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(noauthResourceUris)
-                        .permitAll()    // all our request are temporary permitted
-                        .anyRequest().authenticated())
-                // All request requires authentication
-                .oauth2ResourceServer(oauth2 ->oauth2
-                        .jwt(Customizer.withDefaults()))
-                .build();
-    }
+                log.info("Initializing Security Filter Chain");
+                return httpSecurity
+                                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
+                                // .authorizeHttpRequests(authorize -> authorize
+                                // .anyRequest().permitAll()) // all our request are temporary permitted
+                                .authorizeHttpRequests(authorize -> authorize
+                                                .requestMatchers(noauthResourceUris)
+                                                .permitAll() // all our request are temporary permitted
+                                                .anyRequest().authenticated())
+                                // All request requires authentication
+                                .oauth2ResourceServer(oauth2 -> oauth2
+                                                .jwt(Customizer.withDefaults()))
+                                .build();
+        }
 
 }
