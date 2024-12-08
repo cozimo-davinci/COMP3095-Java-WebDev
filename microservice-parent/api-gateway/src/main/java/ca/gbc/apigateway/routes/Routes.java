@@ -68,16 +68,6 @@ public class Routes {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> swaggerUiRoute() {
-        return route()
-                .route(RequestPredicates.path("/swagger-ui"), request -> {
-                    log.info("Redirecting to Swagger UI index.html");
-                    return ServerResponse.temporaryRedirect(URI.create("/swagger-ui/index.html")).build();
-                })
-                .build();
-    }
-
-    @Bean
     public RouterFunction<ServerResponse> inventoryServiceRoute() {
         log.info("Initializing inventory-service route with URL: {}", inventoryServiceUrl);
 
